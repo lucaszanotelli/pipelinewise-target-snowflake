@@ -478,13 +478,10 @@ def flush_records(stream: str,
         if 'schema_name' not in stream_name_parts or 'table_name' not in stream_name_parts:
             raise Exception(f"Failed to extract schema and table names from stream '{stream}'")
 
-        archive_schema = stream_name_parts['schema_name']
         archive_table = stream_name_parts['table_name']
         archive_tap = archive_load_files['tap']
 
         archive_metadata = {
-            'tap': archive_tap,
-            'schema': archive_schema,
             'table': archive_table,
             'archived-by': 'pipelinewise_target_snowflake'
         }
@@ -498,7 +495,7 @@ def flush_records(stream: str,
 
         # Use same file name as in import
         archive_file = os.path.basename(s3_key)
-        archive_key = f"{archive_tap}/{archive_table}/{archive_file}"
+        archive_key = f"{archive_table}/{archive_file}"
 
         db_sync.copy_to_archive(s3_key, archive_key, archive_metadata)
 
